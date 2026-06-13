@@ -17,12 +17,12 @@ jobs:
           python-version: "3.x"
 
       - name: Install build tools
-        run: python -m pip install build
+        run: python -m pip install --upgrade pip build
 
       - name: Build all packages
         run: |
           for pkg in kavach-logger kavach-mcp-events kavach-shield; do
-            cd $pkg
+            cd "$pkg"
             python -m build
             cd ..
           done
@@ -43,15 +43,16 @@ jobs:
       id-token: write
     environment:
       name: pypi
-      url: https://pypi.org/project/kavach-logger/${{ github.event.release.name }}
+      url: https://pypi.org/project/kavach-logger/${{ github.event.release.tag_name }}
     steps:
       - uses: actions/download-artifact@v4
         with:
           name: release-dists
           path: dist/
-      - uses: pypa/gh-action-pypi-publish@release/v1
+      - uses: pypa/gh-action-pypi-publish@v1
         with:
-          packages-dir: dist/kavach-logger/dist/
+          packages-dir: dist/kavach-logger/dist
+          pypi_token: ${{ secrets.PYPI_API_TOKEN }}
 
   publish-events:
     runs-on: ubuntu-latest
@@ -60,15 +61,16 @@ jobs:
       id-token: write
     environment:
       name: pypi
-      url: https://pypi.org/project/kavach-mcp-events/${{ github.event.release.name }}
+      url: https://pypi.org/project/kavach-mcp-events/${{ github.event.release.tag_name }}
     steps:
       - uses: actions/download-artifact@v4
         with:
           name: release-dists
           path: dist/
-      - uses: pypa/gh-action-pypi-publish@release/v1
+      - uses: pypa/gh-action-pypi-publish@v1
         with:
-          packages-dir: dist/kavach-mcp-events/dist/
+          packages-dir: dist/kavach-mcp-events/dist
+          pypi_token: ${{ secrets.PYPI_API_TOKEN }}
 
   publish-shield:
     runs-on: ubuntu-latest
@@ -77,12 +79,13 @@ jobs:
       id-token: write
     environment:
       name: pypi
-      url: https://pypi.org/project/kavach-shield/${{ github.event.release.name }}
+      url: https://pypi.org/project/kavach-shield/${{ github.event.release.tag_name }}
     steps:
       - uses: actions/download-artifact@v4
         with:
           name: release-dists
           path: dist/
-      - uses: pypa/gh-action-pypi-publish@release/v1
+      - uses: pypa/gh-action-pypi-publish@v1
         with:
-          packages-dir: dist/kavach-shield/dist/
+          packages-dir: dist/kavach-shield/dist
+          pypi_token: ${{ secrets.PYPI_API_TOKEN }}
