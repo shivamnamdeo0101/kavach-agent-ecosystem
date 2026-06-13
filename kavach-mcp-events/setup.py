@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="kavach-mcp-events",
-    version="0.1.0",
+    version="0.2.0",
     description="Event bus for Kavach security middleware lifecycle hooks",
     author="Shivam Namdeo",
     author_email="shivamnamdeo0101@gmail.com",
