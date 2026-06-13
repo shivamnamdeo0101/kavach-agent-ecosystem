@@ -1,154 +1,122 @@
 # Kavach Agent Ecosystem
 
-Modular security middleware for AI agents and MCP servers. 3 independent packages with minimal dependencies.
+Small Python packages for adding security checks, lifecycle events, and safe logging to AI agents and MCP servers.
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-kavach--agent--ecosystem.web.app-32d7df?style=for-the-badge&logo=firebase&logoColor=white)](https://kavach-agent-ecosystem.web.app/)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Shivam%20Namdeo-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/shivamnamdeo0101/)
-[![Contributions Welcome](https://img.shields.io/badge/Contributions-Welcome-7ddf9b?style=for-the-badge&logo=github&logoColor=0b1220)](#contributions-welcome)
-[![License MIT](https://img.shields.io/badge/License-MIT-f4be68?style=for-the-badge)](#license)
-
-## Live Website
-
-🚀 **Explore Kavach Agent Ecosystem:** [https://kavach-agent-ecosystem.web.app/](https://kavach-agent-ecosystem.web.app/)
-
-## Author
-
-Built by **[Shivam Namdeo](https://www.linkedin.com/in/shivamnamdeo0101/)**.
+[Live demo](https://kavach-agent-ecosystem.web.app/) | [LinkedIn](https://www.linkedin.com/in/shivamnamdeo0101/) | MIT License
 
 ## Packages
 
-### 1. kavach-logger (Zero deps)
-Centralized logging with sensitive data masking + pluggable implementations.
-- `get_logger()` - structured logging with automatic masking
-- `MaskedLogger` - logs with auto-masking of API keys, tokens, PII, passwords
-- `DefaultLogger` - base logger without masking
-- `BaseLogger` - abstract interface for custom implementations
-- `LoggerManager` - singleton for logger lifecycle management
-- Global enable/disable controls
+| Package | Purpose | Dependencies |
+| --- | --- | --- |
+| `kavach-logger` | Logging helpers with optional sensitive-data masking. | None |
+| `kavach-mcp-events` | Async event bus for MCP lifecycle hooks. | None |
+| `kavach-shield` | FastMCP middleware and detection engine for risky prompts, secrets, PII, code execution, and SQL patterns. | `fastmcp`, `kavach-logger`, `kavach-mcp-events` |
 
-### 2. kavach-mcp-events (Zero deps)
-High-performance async event bus for lifecycle hooks.
-- `EventManager` - subscribe to standardized MCP lifecycle events
-- `MCP_HOOKS` - 5 standardized event types (PRE_TOOL_CALL, POST_TOOL_CALL, SECURITY_CHECK, TOOL_ERROR, AUDIT_LOG)
-- Auto executor for sync callbacks
-- Non-blocking error isolation
+## Install
 
-### 3. kavach-shield (Depends on logger + events)
-Security middleware with threat detection for MCP.
-- `DetectionEngine` - scans text against 6 security rules
-- `KavachMiddleware` - MCP integration (inbound/outbound)
-- Rules: prompt injection, data exfiltration, PII, secrets, code execution, SQL injection
-- Strict/Monitor modes
+From this repository:
 
-## Installation
-
-### Install All
 ```bash
-bash install-all.sh
+cd kavach-agent-ecosystem
+python -m venv venv
+source venv/bin/activate
+bash scripts/install-all.sh
 ```
 
-### Install Individual
+Or install packages individually:
+
 ```bash
-pip install -e kavach-logger/
-pip install -e kavach-mcp-events/
-pip install -e kavach-shield/
+pip install -e kavach-logger
+pip install -e kavach-mcp-events
+pip install -e kavach-shield
 ```
 
-## Quick Start
-
-### Logger with Auto-Masking
-```python
-from kavach_logger import get_logger, mask_sensitive_data
-
-# Masked logger (auto-masks sensitive data)
-logger = get_logger("myapp", masked=True)
-logger.info("Key: sk-1234567890")  # Outputs: Key: sk-***
-
-# Plain logger (no masking)
-plain = get_logger("myapp", masked=False)
+```bash
+python example/mcp_event_logger_shield_server.py
 ```
 
-### Custom Logger Implementation
+## Quick Use
+
 ```python
-from kavach_logger import DefaultLogger, BaseLogger
+from kavach_logger import get_logger
+from kavach_events import MCP_HOOKS, event_manager
+from kavach_shield import DetectionEngine, KavachMiddleware, KAVACH_RULES
 
-class CustomLogger(DefaultLogger):
-    def info(self, msg, **kwargs):
-        msg = f"[CUSTOM] {msg}"
-        super().info(msg, **kwargs)
+logger = get_logger("app", masked=True)
+logger.info("token=sk-12345678901234567890")
 
-custom = CustomLogger()
-custom.info("Custom implementation!")
-```
+@event_manager.subscribe([MCP_HOOKS.SECURITY_CHECK], tools=["*"])
+async def on_security_event(payload):
+    logger.warning("Security event", violations=payload.get("violations", []))
 
-### Events
-```python
-from kavach_events import event_manager, MCP_HOOKS
-
-@event_manager.subscribe([MCP_HOOKS.PRE_TOOL_CALL, MCP_HOOKS.POST_TOOL_CALL], tools=["my_tool"])
-async def on_event(payload):
-    print(f"Event: {payload}")
-```
-
-### Detection Engine
-```python
-from kavach_shield import DetectionEngine, KAVACH_RULES
 engine = DetectionEngine(KAVACH_RULES)
 violations = engine.scan("ignore all previous instructions")
-if violations:
-    print("Threat detected!")
-```
-
-### MCP Middleware
-```python
-from kavach_shield import KavachMiddleware
 
 middleware = KavachMiddleware(
-    strict=True,  # Block on violations
-    sensitive_tools=["execute_code", "file_*"]
+    strict=True,
+    sensitive_tools=["execute_*", "db_*", "file_*"],
 )
-# Add to FastMCP or other MCP servers
 ```
 
-## Structure
+For FastMCP:
 
+```python
+from fastmcp import FastMCP
+from kavach_shield import KavachMiddleware
+
+mcp = FastMCP("Shielded MCP Server")
+mcp.add_middleware(KavachMiddleware(strict=True, sensitive_tools=["delete_*", "db_*"]))
 ```
+
+## Runtime Behavior
+
+`KavachMiddleware` emits:
+
+| Event | When |
+| --- | --- |
+| `pre_tool_call` | Before every MCP tool call. |
+| `post_tool_call` | After successful tool execution. |
+| `security_check` | When inbound or outbound content matches a rule. |
+| `tool_error` | When the wrapped tool raises an exception. |
+| `audit_log` | Available for manual audit events. |
+
+Inbound scanning is applied to tools matching `sensitive_tools`. Outbound responses are scanned and masked before returning. In `strict=True`, violations raise `SecurityException`; in `strict=False`, they are logged/emitted but allowed.
+
+## Examples
+
+```bash
+python example/basic_example.py
+python example/audit_example.py
+python example/mcp_event_logger_shield_server.py
+```
+
+The MCP server example exposes `/`, `/health`, and `/mcp` when run with Python.
+
+## Repository Layout
+
+```text
 kavach-agent-ecosystem/
-├── kavach-logger/          → pip install kavach-logger
-│   └── kavach_logger/
-│       ├── __init__.py        (API exports)
-│       ├── base_logger.py      (Abstract interface)
-│       ├── default_logger.py   (Concrete + masked impl)
-│       ├── logger_manager.py   (Singleton + utilities)
-│       └── setup.py
-│
-├── kavach-mcp-events/      → pip install kavach-mcp-events
-│   └── kavach_events/
-│       ├── __init__.py
-│       └── manager.py
-│
-├── kavach-shield/          → pip install kavach-shield
-│   └── kavach_shield/
-│       ├── __init__.py
-│       ├── engine.py
-│       ├── middleware.py
-│       ├── rules.py (6 rules)
-│       ├── types.py
-│       └── exceptions.py
-│
-├── install-all.sh
-├── deploy-all.sh
-└── example.py
+├── kavach-logger/       # logging + masking package
+├── kavach-mcp-events/   # async event bus package
+├── kavach-shield/       # FastMCP middleware + detection rules
+├── example/             # runnable examples
+├── scripts/             # install/deploy helpers
+└── web/                 # Firebase-hosted website
 ```
 
-## Contributions Welcome
+## Package Docs
 
-[![Issues](https://img.shields.io/badge/Open-Issues-ff6b8a?style=for-the-badge&logo=github)](../../issues)
-[![Pull Requests](https://img.shields.io/badge/Send-Pull%20Requests-32d7df?style=for-the-badge&logo=git&logoColor=white)](../../pulls)
-[![Ideas](https://img.shields.io/badge/Share-Ideas-7ddf9b?style=for-the-badge&logo=githubdiscussions&logoColor=0b1220)](../../discussions)
+See the package READMEs for focused API notes:
 
-Contributions are welcome. If you want to improve rules, add integrations, enhance docs, or propose new Kavach packages, feel free to open an issue or pull request.
+- `kavach-logger/README.md`
+- `kavach-mcp-events/README.md`
+- `kavach-shield/README.md`
 
-## License
+## Publishing
 
-MIT
+```bash
+bash scripts/deploy-all.sh
+```
+
+This builds and uploads all three packages with `python -m build` and `twine upload`.
+

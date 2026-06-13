@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="kavach-shield",
-    version="0.0.2",
+    version="0.0.3",
     description="Security middleware for Model Context Protocol (MCP) - detection engine and rules",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -16,8 +16,8 @@ setup(
     packages=find_packages(),
     python_requires=">=3.7",
     install_requires=[
-        "kavach-logger>=0.0.2",
-        "kavach-mcp-events>=0.0.2",
+        "kavach-logger>=0.0.3",
+        "kavach-mcp-events>=0.0.3",
         "fastmcp>=0.1.0",
     ],
 )

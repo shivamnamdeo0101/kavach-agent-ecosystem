@@ -38,9 +38,6 @@ class KavachMiddleware(Middleware):
             f"KavachMiddleware initialized | mode={'STRICT' if strict else 'MONITOR'} | rules_count={len(self.rules)}"
         )
 
-    async def __call__(self, context: MiddlewareContext, call_next: Callable[..., Any]) -> Any:
-        return await self.on_call_tool(context, call_next)
-
     def register_tool(self, tool_name: str) -> None:
         """Dynamically register tool identifier for sensitive tool scanning."""
         self.sensitive_tools.add(tool_name)
