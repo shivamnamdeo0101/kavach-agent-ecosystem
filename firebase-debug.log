@@ -1,0 +1,38 @@
+[debug] [2026-06-13T10:28:17.523Z] ----------------------------------------------------------------------
+[debug] [2026-06-13T10:28:17.524Z] Command:       /Users/shinamde/.nvm/versions/node/v20.20.2/bin/node /Users/shinamde/.nvm/versions/node/v20.20.2/bin/firebase init hosting
+[debug] [2026-06-13T10:28:17.524Z] CLI Version:   15.20.0
+[debug] [2026-06-13T10:28:17.524Z] Platform:      darwin
+[debug] [2026-06-13T10:28:17.525Z] Node Version:  v20.20.2
+[debug] [2026-06-13T10:28:17.525Z] Time:          Sat Jun 13 2026 15:58:17 GMT+0530 (India Standard Time)
+[debug] [2026-06-13T10:28:17.525Z] ----------------------------------------------------------------------
+[debug] 
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  /Users/shinamde/Desktop/kavach/kavach-agent-ecosystem
+
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] 
+[debug] [2026-06-13T10:28:36.989Z] ExitPromptError: User force closed the prompt with SIGINT
+    at Interface.sigint (/Users/shinamde/.nvm/versions/node/v20.20.2/lib/node_modules/firebase-tools/node_modules/@inquirer/core/dist/commonjs/lib/create-prompt.js:101:37)
+    at Interface.emit (node:events:524:28)
+    at [_ttyWrite] [as _ttyWrite] (node:internal/readline/interface:1134:18)
+    at ReadStream.onkeypress (node:internal/readline/interface:267:20)
+    at ReadStream.emit (node:events:536:35)
+    at emitKeys (node:internal/readline/utils:371:14)
+    at emitKeys.next (<anonymous>)
+    at ReadStream.onData (node:internal/readline/emitKeypressEvents:64:36)
+    at ReadStream.emit (node:events:524:28)
+    at addChunk (node:internal/streams/readable:561:12)
+[error] 
+[error] Error: An unexpected error has occurred.

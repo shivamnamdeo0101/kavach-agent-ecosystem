@@ -2,6 +2,19 @@
 
 Modular security middleware for AI agents and MCP servers. 3 independent packages with minimal dependencies.
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-kavach--agent--ecosystem.web.app-32d7df?style=for-the-badge&logo=firebase&logoColor=white)](https://kavach-agent-ecosystem.web.app/)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Shivam%20Namdeo-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/shivamnamdeo0101/)
+[![Contributions Welcome](https://img.shields.io/badge/Contributions-Welcome-7ddf9b?style=for-the-badge&logo=github&logoColor=0b1220)](#contributions-welcome)
+[![License MIT](https://img.shields.io/badge/License-MIT-f4be68?style=for-the-badge)](#license)
+
+## Live Website
+
+🚀 **Explore Kavach Agent Ecosystem:** [https://kavach-agent-ecosystem.web.app/](https://kavach-agent-ecosystem.web.app/)
+
+## Author
+
+Built by **[Shivam Namdeo](https://www.linkedin.com/in/shivamnamdeo0101/)**.
+
 ## Packages
 
 ### 1. kavach-logger (Zero deps)
@@ -127,6 +140,14 @@ kavach-agent-ecosystem/
 ├── deploy-all.sh
 └── example.py
 ```
+
+## Contributions Welcome
+
+[![Issues](https://img.shields.io/badge/Open-Issues-ff6b8a?style=for-the-badge&logo=github)](../../issues)
+[![Pull Requests](https://img.shields.io/badge/Send-Pull%20Requests-32d7df?style=for-the-badge&logo=git&logoColor=white)](../../pulls)
+[![Ideas](https://img.shields.io/badge/Share-Ideas-7ddf9b?style=for-the-badge&logo=githubdiscussions&logoColor=0b1220)](../../discussions)
+
+Contributions are welcome. If you want to improve rules, add integrations, enhance docs, or propose new Kavach packages, feel free to open an issue or pull request.
 
 ## License
 
