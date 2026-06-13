@@ -6,11 +6,11 @@ Small Python packages for adding security checks, lifecycle events, and safe log
 
 ## Packages
 
-| Package | Purpose | Dependencies |
-| --- | --- | --- |
-| `kavach-logger` | Logging helpers with optional sensitive-data masking. | None |
-| `kavach-mcp-events` | Async event bus for MCP lifecycle hooks. | None |
-| `kavach-shield` | FastMCP middleware and detection engine for risky prompts, secrets, PII, code execution, and SQL patterns. | `fastmcp`, `kavach-logger`, `kavach-mcp-events` |
+| Package | PyPI | Purpose | Dependencies |
+| --- | --- | --- | --- |
+| `kavach-logger` | [pypi.org/project/kavach-logger](https://pypi.org/project/kavach-logger/) | Logging helpers with optional sensitive-data masking. | None |
+| `kavach-mcp-events` | [pypi.org/project/kavach-mcp-events](https://pypi.org/project/kavach-mcp-events/) | Async event bus for MCP lifecycle hooks. | None |
+| `kavach-shield` | [pypi.org/project/kavach-shield](https://pypi.org/project/kavach-shield/) | FastMCP middleware and detection engine for risky prompts, secrets, PII, code execution, and SQL patterns. | `fastmcp`, `kavach-logger`, `kavach-mcp-events` |
 
 ## Install
 
@@ -119,4 +119,3 @@ bash scripts/deploy-all.sh
 ```
 
 This builds and uploads all three packages with `python -m build` and `twine upload`.
-
