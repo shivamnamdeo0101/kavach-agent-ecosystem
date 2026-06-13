@@ -287,16 +287,21 @@ middleware.process_request("file_write", {"path": "/tmp/test"})
 ### Event Hooks (with kavach-mcp-events)
 
 ```python
-from kavach_shield import KavachMiddleware
-from kavach_events import event_manager
+from kavach_shield import KavachMiddleware, KAVACH_RULES
+from kavach_events import event_manager, MCP_HOOKS
 
-# Subscribe to security events
-@event_manager.subscribe(["security_violation"], tools=["*"])
+# Subscribe to standardized security events
+@event_manager.subscribe([MCP_HOOKS.SECURITY_CHECK], tools=["*"])
 async def on_violation(payload):
-    print(f"Threat detected: {payload}")
+    print(f"Threat detected: {len(payload.get('violations', []))} violations")
+
+# Subscribe to error events
+@event_manager.subscribe([MCP_HOOKS.TOOL_ERROR], tools=["*"])
+async def on_error(payload):
+    print(f"Error: {payload['error']}")
 
 middleware = KavachMiddleware(rules=KAVACH_RULES)
-# Violations will trigger the subscriber
+# Violations automatically trigger SECURITY_CHECK events
 ```
 
 ## Use Cases

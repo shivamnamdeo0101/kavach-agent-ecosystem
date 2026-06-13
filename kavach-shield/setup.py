@@ -18,5 +18,6 @@ setup(
     install_requires=[
         "kavach-logger>=0.1.0",
         "kavach-mcp-events>=0.1.0",
+        "fastmcp>=0.1.0",
     ],
 )

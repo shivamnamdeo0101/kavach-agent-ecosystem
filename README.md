@@ -15,7 +15,8 @@ Centralized logging with sensitive data masking + pluggable implementations.
 
 ### 2. kavach-mcp-events (Zero deps)
 High-performance async event bus for lifecycle hooks.
-- `EventManager` - subscribe to pre/post/sec events  
+- `EventManager` - subscribe to standardized MCP lifecycle events
+- `MCP_HOOKS` - 5 standardized event types (PRE_TOOL_CALL, POST_TOOL_CALL, SECURITY_CHECK, TOOL_ERROR, AUDIT_LOG)
 - Auto executor for sync callbacks
 - Non-blocking error isolation
 
@@ -69,9 +70,9 @@ custom.info("Custom implementation!")
 
 ### Events
 ```python
-from kavach_events import event_manager
+from kavach_events import event_manager, MCP_HOOKS
 
-@event_manager.subscribe(["pre", "post"], tools=["my_tool"])
+@event_manager.subscribe([MCP_HOOKS.PRE_TOOL_CALL, MCP_HOOKS.POST_TOOL_CALL], tools=["my_tool"])
 async def on_event(payload):
     print(f"Event: {payload}")
 ```

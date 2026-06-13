@@ -19,32 +19,54 @@ pip install kavach-mcp-events
 
 ## Quick Start
 
+### Using Standardized MCP Hooks (Recommended)
+
+```python
+from kavach_events import event_manager, MCP_HOOKS
+
+# Subscribe to standardized MCP lifecycle events
+@event_manager.subscribe([MCP_HOOKS.PRE_TOOL_CALL], tools=["execute_code"])
+async def before_code_execution(payload):
+    print(f"About to execute: {payload['arguments']}")
+
+@event_manager.subscribe([MCP_HOOKS.POST_TOOL_CALL], tools=["execute_code"])
+async def after_code_execution(payload):
+    print(f"Execution result: {payload['response']}")
+
+@event_manager.subscribe([MCP_HOOKS.SECURITY_CHECK], tools=["*"])
+async def on_threat(payload):
+    print(f"⚠️  Threat detected: {len(payload['violations'])} violations")
+
+# These events are auto-emitted by KavachMiddleware
+# No manual emit() needed!
+```
+
 ### Basic Event Subscription
 
 ```python
 from kavach_events import event_manager
 
-# Subscribe to specific events
+# Subscribe to custom events (manual control)
 @event_manager.subscribe(["pre_execution", "post_execution"])
 async def handle_event(payload):
     print(f"Event received: {payload}")
 
-# Emit events
+# Emit events manually
 await event_manager.emit("pre_execution", "my_tool", {"data": "test"})
 ```
 
 ### Tool-Specific Listeners
 
 ```python
-from kavach_events import event_manager
+from kavach_events import event_manager, MCP_HOOKS
 
 # Listen only to specific tools
-@event_manager.subscribe(["security_check"], tools=["execute_code", "db_query"])
+@event_manager.subscribe([MCP_HOOKS.SECURITY_CHECK], tools=["execute_code", "db_query"])
 async def on_sensitive_tool(payload):
     print(f"Sensitive tool event: {payload}")
 
 # Listen to all tools (wildcard)
-@event_manager.subscribe(["error"], tools=["*"])
+@event_manager.subscribe([MCP_HOOKS.TOOL_ERROR], tools=["*"])
 async def on_any_error(payload):
     print(f"Error on any tool: {payload}")
 ```
@@ -52,25 +74,25 @@ async def on_any_error(payload):
 ### Synchronous Callbacks
 
 ```python
-from kavach_events import event_manager
+from kavach_events import event_manager, MCP_HOOKS
 
 # Sync callbacks are automatically executed in thread pool
-@event_manager.subscribe(["log_event"])
+@event_manager.subscribe([MCP_HOOKS.AUDIT_LOG])
 def sync_handler(payload):  # No async needed
     with open("/var/log/security.log", "a") as f:
         f.write(str(payload))
 
-await event_manager.emit("log_event", "db_query", {"query": "SELECT 1"})
+await event_manager.emit(MCP_HOOKS.AUDIT_LOG, "db_query", {"query": "SELECT 1"})
 ```
 
 ### Check for Listeners
 
 ```python
-from kavach_events import event_manager
+from kavach_events import event_manager, MCP_HOOKS
 
 # Check if any listeners exist before expensive operations
-if event_manager.has_listeners("security_check", "execute_code"):
-    await event_manager.emit("security_check", "execute_code", payload)
+if event_manager.has_listeners(MCP_HOOKS.SECURITY_CHECK, "execute_code"):
+    await event_manager.emit(MCP_HOOKS.SECURITY_CHECK, "execute_code", payload)
 ```
 
 ## API Reference
@@ -84,21 +106,23 @@ Core event bus.
 Decorator to register event listeners.
 
 **Parameters:**
-- `events` (List[str]): Event types to listen for
+- `events` (List[str]): Event types to listen for (use `MCP_HOOKS.*` constants)
 - `tools` (List[str]): Tool names to listen to. Defaults to ["*"] (all tools)
 
 **Returns:** Decorator function
 
 **Examples:**
 ```python
+from kavach_events import MCP_HOOKS
+
 # Listen to events on specific tools
-@event_manager.subscribe(["pre", "post"], tools=["file_write", "db_query"])
+@event_manager.subscribe([MCP_HOOKS.PRE_TOOL_CALL, MCP_HOOKS.POST_TOOL_CALL], tools=["file_write", "db_query"])
 
 # Listen to all tools
-@event_manager.subscribe(["error"], tools=["*"])
+@event_manager.subscribe([MCP_HOOKS.TOOL_ERROR], tools=["*"])
 
 # Shorthand: listen to all tools
-@event_manager.subscribe(["security_event"])  # tools defaults to ["*"]
+@event_manager.subscribe([MCP_HOOKS.SECURITY_CHECK])  # tools defaults to ["*"]
 ```
 
 #### `emit(event_type: str, tool_name: str, data: Any) -> Coroutine`
@@ -106,7 +130,7 @@ Decorator to register event listeners.
 Emit an event to all registered listeners.
 
 **Parameters:**
-- `event_type` (str): Type of event
+- `event_type` (str): Type of event (use `MCP_HOOKS.*` constants)
 - `tool_name` (str): Tool that triggered the event
 - `data` (Any): Payload data for listeners
 
@@ -119,8 +143,10 @@ Emit an event to all registered listeners.
 
 **Example:**
 ```python
+from kavach_events import MCP_HOOKS
+
 await event_manager.emit(
-    "security_check",
+    MCP_HOOKS.SECURITY_CHECK,
     "execute_code",
     {"code": "print('hello')", "language": "python"}
 )
@@ -131,16 +157,18 @@ await event_manager.emit(
 Check if listeners exist for an event.
 
 **Parameters:**
-- `event_type` (str): Event type to check
+- `event_type` (str): Event type to check (use `MCP_HOOKS.*` constants)
 - `tool_name` (str): Tool name to check
 
 **Returns:** True if either tool-specific or global listeners exist
 
 **Example:**
 ```python
-if event_manager.has_listeners("security_check", "db_query"):
+from kavach_events import MCP_HOOKS
+
+if event_manager.has_listeners(MCP_HOOKS.SECURITY_CHECK, "db_query"):
     # Skip expensive validation if no listeners
-    await event_manager.emit("security_check", "db_query", payload)
+    await event_manager.emit(MCP_HOOKS.SECURITY_CHECK, "db_query", payload)
 ```
 
 ### Global Instance
@@ -152,55 +180,94 @@ from kavach_events import event_manager
 await event_manager.emit(...)
 ```
 
-## Common Event Types
+## Standardized MCP Hooks
 
-| Event | Typical Use | Payload |
-|-------|-------------|----------|
-| `pre_execution` | Pre-flight checks | tool_input, tool_name |
-| `post_execution` | Post-execution hooks | result, tool_name |
-| `security_check` | Security validation | input_data, rule_set |
-| `security_violation` | Threat detected | violation, severity |
-| `error` | Error handling | error_msg, exception |
-| `log_event` | Audit logging | message, metadata |
+Use `MCP_HOOKS` constants for production-grade event handling:
+
+```python
+from kavach_events import MCP_HOOKS
+
+# Standardized lifecycle hooks (auto-emitted by KavachMiddleware for ALL tools)
+print(MCP_HOOKS.PRE_TOOL_CALL)      # "pre_tool_call"   - Before tool execution
+print(MCP_HOOKS.POST_TOOL_CALL)     # "post_tool_call"  - After tool success
+print(MCP_HOOKS.SECURITY_CHECK)     # "security_check"  - Threat detected
+print(MCP_HOOKS.TOOL_ERROR)         # "tool_error"      - Tool execution failed
+print(MCP_HOOKS.AUDIT_LOG)          # "audit_log"       - Audit trail events
+```
+
+### Auto-Emit: MCP Middleware Integration
+
+**KavachMiddleware automatically emits standardized hooks for EVERY tool call:**
+
+```python
+from fastmcp import FastMCP
+from kavach_shield import KavachMiddleware
+from kavach_events import event_manager, MCP_HOOKS
+
+mcp = FastMCP()
+
+# Subscribe to auto-emitted events
+@event_manager.subscribe([MCP_HOOKS.PRE_TOOL_CALL], tools=["*"])
+async def on_every_tool_pre(payload):
+    print(f"Tool: {payload['tool_name']}")
+
+@event_manager.subscribe([MCP_HOOKS.POST_TOOL_CALL], tools=["*"])
+async def on_every_tool_post(payload):
+    print(f"Tool completed: {payload['tool_name']}")
+
+# Add middleware (auto-emits all events)
+mcp.add_middleware(KavachMiddleware(strict=True))
+
+# No manual emit() needed - middleware handles it!
+```
+
+## Auto-Emit Behavior
+
+**KavachMiddleware automatically emits these standardized events:**
+
+| Event | Auto-Emit | Use Case |
+|-------|-----------|----------|
+| `pre_tool_call` | ✅ All tools | Before execution |
+| `post_tool_call` | ✅ All tools | After success |
+| `security_check` | ⚠️ Violations only | Threat detected |
+| `tool_error` | ✅ On failure | Execution error |
+| `audit_log` | Manual | Custom audit events |
 
 ## Examples
 
 ### Security Event Pipeline
 
 ```python
-from kavach_events import event_manager
+from kavach_events import event_manager, MCP_HOOKS
 
-# Pre-execution validation
-@event_manager.subscribe(["pre_execution"], tools=["execute_code"])
+# Pre-execution validation (auto-emitted by middleware)
+@event_manager.subscribe([MCP_HOOKS.PRE_TOOL_CALL], tools=["execute_code"])
 async def validate_before_exec(payload):
     print(f"Validating code...")
     # Perform security checks
 
-# Post-execution audit
-@event_manager.subscribe(["post_execution"], tools=["execute_code"])
+# Post-execution audit (auto-emitted by middleware)
+@event_manager.subscribe([MCP_HOOKS.POST_TOOL_CALL], tools=["execute_code"])
 async def audit_after_exec(payload):
     print(f"Audit: code executed successfully")
     # Log execution
 
-# Emit the pipeline
-await event_manager.emit("pre_execution", "execute_code", {"code": "..."})
-# ... code execution happens ...
-await event_manager.emit("post_execution", "execute_code", {"result": "..."})
+# No manual emit() needed - middleware handles it!
 ```
 
 ### Error Handling with Global Listeners
 
 ```python
-from kavach_events import event_manager
+from kavach_events import event_manager, MCP_HOOKS
 
-# Catch all errors
-@event_manager.subscribe(["error"], tools=["*"])
+# Catch all errors (auto-emitted by middleware)
+@event_manager.subscribe([MCP_HOOKS.TOOL_ERROR], tools=["*"])
 async def global_error_handler(payload):
     print(f"Caught error on any tool: {payload}")
     # Send alert, log to monitoring system
 
 # Tool-specific error handling
-@event_manager.subscribe(["error"], tools=["db_query"])
+@event_manager.subscribe([MCP_HOOKS.TOOL_ERROR], tools=["db_query"])
 async def db_error_handler(payload):
     print(f"Database error (with retry logic): {payload}")
     # Retry or fallback
@@ -230,13 +297,13 @@ await event_manager.emit("batch_process", "tool", {})
 ### Conditional Event Emission
 
 ```python
-from kavach_events import event_manager
+from kavach_events import event_manager, MCP_HOOKS
 
 # Only emit if listeners exist (performance optimization)
-if event_manager.has_listeners("expensive_event", "my_tool"):
+if event_manager.has_listeners(MCP_HOOKS.SECURITY_CHECK, "my_tool"):
     # Expensive operation
     data = await fetch_detailed_metrics()
-    await event_manager.emit("expensive_event", "my_tool", data)
+    await event_manager.emit(MCP_HOOKS.SECURITY_CHECK, "my_tool", data)
 else:
     # Skip expensive operation if no listeners
     pass
@@ -261,15 +328,17 @@ else:
 
 ```python
 from kavach_shield import KavachMiddleware
-from kavach_events import event_manager
+from kavach_events import event_manager, MCP_HOOKS
 
 # Listen to security violations from Shield
-@event_manager.subscribe(["security_violation"])
+@event_manager.subscribe([MCP_HOOKS.SECURITY_CHECK], tools=["*"])
 async def on_threat(payload):
-    print(f"Threat: {payload['name']}")
+    print(f"Threat detected: {len(payload.get('violations', []))} violations")
 
 # Create middleware (emits events automatically)
 middleware = KavachMiddleware(rules=KAVACH_RULES)
+
+# No manual emit() needed - middleware auto-emits all events!
 ```
 
 ## License
