@@ -10,32 +10,22 @@ permissions:
 jobs:
   release-build:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.x"
 
       - name: Install build tools
-        run: |
-          python -m pip install build
+        run: python -m pip install build
 
-      - name: Build kavach-logger
+      - name: Build all packages
         run: |
-          cd kavach-logger
-          python -m build
-
-      - name: Build kavach-mcp-events
-        run: |
-          cd kavach-mcp-events
-          python -m build
-
-      - name: Build kavach-shield
-        run: |
-          cd kavach-shield
-          python -m build
+          for pkg in kavach-logger kavach-mcp-events kavach-shield; do
+            cd $pkg
+            python -m build
+            cd ..
+          done
 
       - name: Upload distributions
         uses: actions/upload-artifact@v4
@@ -46,29 +36,53 @@ jobs:
             kavach-mcp-events/dist/
             kavach-shield/dist/
 
-  pypi-publish:
+  publish-logger:
     runs-on: ubuntu-latest
-    needs:
-      - release-build
+    needs: release-build
     permissions:
       id-token: write
-
-    strategy:
-      matrix:
-        package: [kavach-logger, kavach-mcp-events, kavach-shield]
-
     environment:
       name: pypi
-      url: https://pypi.org/project/${{ matrix.package }}/${{ github.event.release.name }}
-
+      url: https://pypi.org/project/kavach-logger/${{ github.event.release.name }}
     steps:
-      - name: Retrieve release distributions
-        uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v4
         with:
           name: release-dists
           path: dist/
-
-      - name: Publish ${{ matrix.package }} to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
+      - uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          packages-dir: dist/${{ matrix.package }}/dist/
+          packages-dir: dist/kavach-logger/
+
+  publish-events:
+    runs-on: ubuntu-latest
+    needs: release-build
+    permissions:
+      id-token: write
+    environment:
+      name: pypi
+      url: https://pypi.org/project/kavach-mcp-events/${{ github.event.release.name }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-dists
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist/kavach-mcp-events/
+
+  publish-shield:
+    runs-on: ubuntu-latest
+    needs: release-build
+    permissions:
+      id-token: write
+    environment:
+      name: pypi
+      url: https://pypi.org/project/kavach-shield/${{ github.event.release.name }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-dists
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist/kavach-shield/
