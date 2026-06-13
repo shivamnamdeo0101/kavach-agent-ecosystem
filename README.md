@@ -18,7 +18,7 @@ From this repository:
 
 ```bash
 cd kavach-agent-ecosystem
-python -m venv venv
+python3 -m venv venv
 source venv/bin/activate
 bash scripts/install-all.sh
 ```
