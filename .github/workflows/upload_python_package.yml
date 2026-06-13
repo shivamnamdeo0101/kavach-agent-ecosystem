@@ -52,7 +52,8 @@ jobs:
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: dist/kavach-logger/dist
-          pypi_token: ${{ secrets.PYPI_API_TOKEN }}
+        env:
+          PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
 
   publish-events:
     runs-on: ubuntu-latest
@@ -70,7 +71,8 @@ jobs:
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: dist/kavach-mcp-events/dist
-          pypi_token: ${{ secrets.PYPI_API_TOKEN }}
+        env:
+          PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
 
   publish-shield:
     runs-on: ubuntu-latest
@@ -88,4 +90,5 @@ jobs:
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: dist/kavach-shield/dist
-          pypi_token: ${{ secrets.PYPI_API_TOKEN }}
+        env:
+          PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
