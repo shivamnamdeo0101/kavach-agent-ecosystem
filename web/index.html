@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Kavach is dark-mode security infrastructure for AI agents, MCP tool calls, observability, policy enforcement, and sensitive data protection.">
+  <title>Kavach Agent Ecosystem</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav-shell" aria-label="Primary navigation">
+      <a class="brand" href="#top" aria-label="Kavach home">
+        <img src="assets/logo.png" alt="">
+        <span>Kavach</span>
+      </a>
+
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-menu" aria-label="Open menu">
+        <span></span>
+        <span></span>
+      </button>
+
+      <div class="site-menu" id="site-menu">
+        <a href="#platform">Platform</a>
+        <a href="#rules">Rules</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#developers">Developers</a>
+      </div>
+
+      <a class="github-link" href="https://github.com/shivamnamdeo0101" target="_blank" rel="noreferrer">GitHub</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero-section" aria-labelledby="hero-title">
+      <div class="hero-bg" aria-hidden="true"></div>
+      <div class="shell hero-layout">
+        <div class="hero-copy reveal">
+          <p class="eyebrow">Security infrastructure for agentic systems</p>
+          <h1 id="hero-title">Kavach Agent Ecosystem</h1>
+          <p class="hero-lede">Protect MCP tool calls, detect hostile prompts, mask sensitive payloads, and watch every agent action through one dark, operational control plane.</p>
+          <div class="hero-actions" aria-label="Primary actions">
+            <a class="button primary" href="#developers">Start Building</a>
+            <a class="button secondary" href="#architecture">View Architecture</a>
+          </div>
+          <dl class="hero-metrics" aria-label="Kavach highlights">
+            <div>
+              <dt>6+</dt>
+              <dd>Threat rules</dd>
+            </div>
+            <div>
+              <dt>100%</dt>
+              <dd>Open source</dd>
+            </div>
+            <div>
+              <dt>0</dt>
+              <dd>Runtime lock-in</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div class="hero-console reveal" aria-label="Kavach security console preview">
+          <div class="console-topbar">
+            <span></span>
+            <span></span>
+            <span></span>
+            <p>shield.live</p>
+          </div>
+          <img src="assets/cover.png" alt="Kavach security dashboard preview">
+          <div class="protection-flow" aria-label="Kavach protection workflow">
+            <div class="protection-step">
+              <span>01</span>
+              <strong>Scan prompt</strong>
+              <p>Detect injection</p>
+            </div>
+            <div class="protection-step">
+              <span>02</span>
+              <strong>Mask secrets</strong>
+              <p>Redact PII/API keys</p>
+            </div>
+            <div class="protection-step">
+              <span>03</span>
+              <strong>Enforce policy</strong>
+              <p>Block unsafe tools</p>
+            </div>
+            <div class="protection-step">
+              <span>04</span>
+              <strong>Log event</strong>
+              <p>Trace every action</p>
+            </div>
+          </div>
+          <div class="signal-panel">
+            <div>
+              <span class="pulse"></span>
+              <p>Policy engine active</p>
+            </div>
+            <strong>99.98%</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="trust-strip" aria-label="Security coverage">
+      <div class="shell strip-grid">
+        <span>Prompt injection defense</span>
+        <span>PII and secret masking</span>
+        <span>MCP event observability</span>
+        <span>Tool execution controls</span>
+      </div>
+    </section>
+
+    <section class="section-band" id="platform" aria-labelledby="platform-title">
+      <div class="shell section-heading reveal">
+        <p class="eyebrow">Platform</p>
+        <h2 id="platform-title">A security layer built for AI agents in motion.</h2>
+        <p>Kavach sits between agent reasoning and tool execution, giving teams the controls they expect from production infrastructure without slowing down developer workflows.</p>
+      </div>
+
+      <div class="shell feature-grid">
+        <article class="feature-card reveal">
+          <div class="feature-icon shield-icon" aria-hidden="true"></div>
+          <h3>Kavach Shield</h3>
+          <p>Middleware for MCP servers that inspects requests, blocks unsafe actions, and applies strict policies before the tool call leaves the agent boundary.</p>
+        </article>
+        <article class="feature-card reveal">
+          <div class="feature-icon events-icon" aria-hidden="true"></div>
+          <h3>MCP Events</h3>
+          <p>A structured event bus for tracing agent sessions, tool lifecycle events, policy outcomes, and downstream security integrations.</p>
+        </article>
+        <article class="feature-card reveal">
+          <div class="feature-icon logger-icon" aria-hidden="true"></div>
+          <h3>Kavach Logger</h3>
+          <p>High-signal logs with automatic masking for tokens, credentials, personal data, and payloads that should never hit observability backends raw.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="rules-section" id="rules" aria-labelledby="rules-title">
+      <div class="shell rules-layout">
+        <div class="rules-copy reveal">
+          <p class="eyebrow">Threat rules</p>
+          <h2 id="rules-title">Block agent risks before they become incidents.</h2>
+          <p>Every request is scored against practical controls for the failure modes modern agent systems already face.</p>
+        </div>
+
+        <div class="rules-console reveal">
+          <div class="rules-grid" aria-label="Security rules">
+            <button class="rule-tile active" type="button" data-rule="prompt"><span>01</span>Prompt Injection</button>
+            <button class="rule-tile" type="button" data-rule="exfiltration"><span>02</span>Data Exfiltration</button>
+            <button class="rule-tile" type="button" data-rule="secrets"><span>03</span>Secret Exposure</button>
+            <button class="rule-tile" type="button" data-rule="pii"><span>04</span>PII Leakage</button>
+            <button class="rule-tile" type="button" data-rule="sql"><span>05</span>SQL Injection</button>
+            <button class="rule-tile" type="button" data-rule="execution"><span>06</span>Dangerous Execution</button>
+          </div>
+
+          <aside class="rule-detail" aria-live="polite">
+            <div class="detail-topline">
+              <span id="rule-status">High confidence block</span>
+              <strong>Live policy</strong>
+            </div>
+            <h3 id="rule-title">Prompt Injection</h3>
+            <p id="rule-copy">Detects attempts to override system instructions, reveal hidden context, or redirect tool calls through malicious natural language.</p>
+            <div class="detail-meta" aria-label="Rule behavior">
+              <span>Inspect</span>
+              <span>Mask</span>
+              <span>Block</span>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="section-band architecture-band" id="architecture" aria-labelledby="architecture-title">
+      <div class="shell section-heading reveal">
+        <p class="eyebrow">Architecture</p>
+        <h2 id="architecture-title">A clean path from request to tool call.</h2>
+        <p>Each stage produces policy context, telemetry, and a decision trail that developers can debug and security teams can audit.</p>
+      </div>
+
+      <div class="shell package-system reveal" aria-label="Kavach package interworking">
+        <div class="system-core">
+          <span>Agent Runtime</span>
+          <strong>MCP Request</strong>
+          <p>Prompt, context, tool intent</p>
+        </div>
+
+        <div class="package-node shield-package">
+          <span>Package 01</span>
+          <strong>Kavach Shield</strong>
+          <p>Inspects requests and enforces allow/block policies.</p>
+        </div>
+
+        <div class="package-node events-package">
+          <span>Package 02</span>
+          <strong>MCP Events</strong>
+          <p>Broadcasts session, policy, and tool lifecycle events.</p>
+        </div>
+
+        <div class="package-node logger-package">
+          <span>Package 03</span>
+          <strong>Kavach Logger</strong>
+          <p>Masks secrets and emits safe operational logs.</p>
+        </div>
+
+        <div class="future-node" aria-label="Future packages">
+          <span>Future packages</span>
+          <strong>Plug in next</strong>
+        </div>
+      </div>
+
+    </section>
+
+    <section class="developer-section" id="developers" aria-labelledby="developer-title">
+      <div class="shell developer-layout">
+        <div class="developer-copy reveal">
+          <p class="eyebrow">Developers</p>
+          <h2 id="developer-title">Add protection in minutes.</h2>
+          <p>Wrap your MCP server with strict middleware, ship masked logs, and expand rules as your agent workflows grow.</p>
+          <a class="button primary" href="https://github.com/shivamnamdeo0101" target="_blank" rel="noreferrer">Open GitHub</a>
+        </div>
+
+        <div class="code-window reveal">
+          <div class="code-header">
+            <span></span>
+            <span></span>
+            <span></span>
+            <button class="copy-code" type="button">Copy</button>
+          </div>
+          <pre><code>pip install kavach-shield
+
+from kavach_shield import KavachMiddleware
+
+mcp.add_middleware(
+    KavachMiddleware(
+        strict=True,
+        mask_secrets=True,
+        emit_events=True
+    )
+)</code></pre>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="shell footer-layout">
+      <a class="brand" href="#top" aria-label="Kavach home">
+        <img src="assets/logo.png" alt="">
+        <span>Kavach</span>
+      </a>
+      <p>Open source security infrastructure for agentic systems.</p>
+      <a href="#top">Back to top</a>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
