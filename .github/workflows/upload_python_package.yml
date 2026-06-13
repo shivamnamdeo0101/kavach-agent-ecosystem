@@ -51,7 +51,7 @@ jobs:
           path: dist/
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          packages-dir: dist/kavach-logger/
+          packages-dir: dist/kavach-logger/dist/
 
   publish-events:
     runs-on: ubuntu-latest
@@ -68,7 +68,7 @@ jobs:
           path: dist/
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          packages-dir: dist/kavach-mcp-events/
+          packages-dir: dist/kavach-mcp-events/dist/
 
   publish-shield:
     runs-on: ubuntu-latest
@@ -85,4 +85,4 @@ jobs:
           path: dist/
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          packages-dir: dist/kavach-shield/
+          packages-dir: dist/kavach-shield/dist/
