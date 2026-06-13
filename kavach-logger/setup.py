@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="kavach-logger",
-    version="0.1.0",
+    version="0.2.0",
     description="Centralized logging and masking for Kavach security suite",
     author="Shivam Namdeo",
     author_email="shivamnamdeo0101@gmail.com",
