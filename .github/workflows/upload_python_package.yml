@@ -49,7 +49,7 @@ jobs:
         with:
           name: release-dists
           path: dist/
-      - uses: pypa/gh-action-pypi-publish@v1
+      - uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: dist/kavach-logger/dist
           pypi_token: ${{ secrets.PYPI_API_TOKEN }}
@@ -67,7 +67,7 @@ jobs:
         with:
           name: release-dists
           path: dist/
-      - uses: pypa/gh-action-pypi-publish@v1
+      - uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: dist/kavach-mcp-events/dist
           pypi_token: ${{ secrets.PYPI_API_TOKEN }}
@@ -85,7 +85,7 @@ jobs:
         with:
           name: release-dists
           path: dist/
-      - uses: pypa/gh-action-pypi-publish@v1
+      - uses: pypa/gh-action-pypi-publish@release/v1
         with:
           packages-dir: dist/kavach-shield/dist
           pypi_token: ${{ secrets.PYPI_API_TOKEN }}
