@@ -1,11 +1,22 @@
 #!/bin/bash
-echo "Building kavach-logger..."
-cd kavach-logger && python -m build && twine upload dist/* && cd ..
+set -euo pipefail
 
-echo "Building kavach-mcp-events..."
-cd kavach-mcp-events && python -m build && twine upload dist/* && cd ..
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+PACKAGES=(
+  "kavach-logger"
+  "kavach-mcp-events"
+  "kavach-shield"
+  "kavach-mcp-gateway"
+)
 
-echo "Building kavach-shield..."
-cd kavach-shield && python -m build && twine upload dist/* && cd ..
+python -m pip install --upgrade build twine
 
-echo "✅ All packages deployed to PyPI!"
+for pkg in "${PACKAGES[@]}"; do
+  echo "Building ${pkg}..."
+  cd "${ROOT_DIR}/${pkg}"
+  rm -rf dist build *.egg-info
+  python -m build
+  twine upload --skip-existing --verbose dist/*
+done
+
+echo "All packages deployed to PyPI!"

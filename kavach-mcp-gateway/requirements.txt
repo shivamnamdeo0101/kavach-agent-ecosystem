@@ -1,0 +1,4 @@
+PyYAML>=5.3
+httpx>=0.23.0
+kavach-logger>=0.0.3
+kavach-mcp-events>=0.0.3
